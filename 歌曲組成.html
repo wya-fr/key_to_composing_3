@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>歌曲組成元素</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* 確保所有元素都使用 Inter 字體 */
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* 自訂過渡效果 */
+    .transition-all {
+      transition-property: all;
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      transition-duration: 300ms;
+    }
+  </style>
+</head>
+<body class="bg-stone-100 text-gray-800 p-4 sm:p-8 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 w-full max-w-4xl">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-blue-900">
+      歌曲組成元素：一首歌的五個核心
+    </h1>
+    <p class="text-lg text-gray-600 mb-8 text-center max-w-2xl mx-auto">
+      每個元素都扮演著獨特的角色，它們的完美配合才能創造出一首完整的樂曲。
+    </p>
+
+    <!-- 元素選擇按鈕區 -->
+    <div id="button-container" class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+      <!-- 按鈕將由 JavaScript 動態生成 -->
+    </div>
+
+    <!-- 動態內容展示區 -->
+    <div id="content-container" class="bg-stone-50 rounded-2xl p-6 sm:p-8 mt-6 shadow-inner">
+      <!-- 內容將由 JavaScript 動態生成 -->
+    </div>
+  </div>
+
+  <script>
+    // 歌曲元素數據
+    const elements = [
+      {
+        id: 'lead',
+        name: 'LEAD',
+        icon: 'fas fa-microphone-alt', // Font Awesome icon class
+        description: '歌曲的主角，負責主旋律。吸引聽眾注意力，傳達歌曲核心情感。',
+        example: '主唱的人聲旋律、吉他獨奏、合成器主音。',
+        analogy: '歌曲的「主唱」'
+      },
+      {
+        id: 'rhythm',
+        name: 'RHYTHM',
+        icon: 'fas fa-drum',
+        description: '歌曲的律動核心，提供穩定的脈動。驅動歌曲前進，讓聽眾產生動感。',
+        example: '鼓組的穩定拍子、打擊樂器。',
+        analogy: '歌曲的「心跳」'
+      },
+      {
+        id: 'foundation',
+        name: 'FOUNDATION',
+        icon: 'fas fa-guitar',
+        description: '歌曲的和聲與低頻支撐。建立和弦進行，為歌曲提供穩固的根基。',
+        example: '貝斯（低音吉他）的低音線、吉他或鋼琴的和弦。',
+        analogy: '歌曲的「骨架」'
+      },
+      {
+        id: 'fill',
+        name: 'FILL',
+        icon: 'fas fa-music',
+        description: '銜接段落的過渡樂句。增加變化，引導聽眾從一個樂句進入下一個樂句。',
+        example: '鼓的過門、吉他的滑音或短樂句。',
+        analogy: '歌曲的「轉折點」'
+      },
+      {
+        id: 'pad',
+        name: 'PAD',
+        icon: 'fas fa-layer-group',
+        description: '營造氛圍與空間感的背景音效。增加音樂的厚度，營造特定情緒基調。',
+        example: '合成器演奏的長音、弦樂器營造的和聲。',
+        analogy: '歌曲的「氛圍」'
+      },
+      {
+        id: 'demo',
+        name: '範例',
+        icon: 'fas fa-headphones',
+        description: null,
+        songs: [
+          { name: 'JADE - Elephant', url: 'https://wya-fr.github.io/song_analysing/%E6%AD%8C%E6%9B%B2%E5%88%86%E6%9E%90' },
+          { name: '盧廣仲 - 再見勾勾', url: 'https://wya-fr.github.io/song_analysing/%E6%AD%8C%E6%9B%B2%E5%88%86%E6%9E%90' },
+          { name: '草東沒有派對 - 山海', url: 'https://wya-fr.github.io/emotion_2/%E6%AD%8C%E6%9B%B2%E6%83%85%E7%B7%92%E9%87%8F%E8%A1%A8' },
+          { name: 'JADE - 玻璃屋', url: 'https://wya-fr.github.io/emotion_2/%E6%AD%8C%E6%9B%B2%E6%83%85%E7%B7%92%E9%87%8F%E8%A1%A8' },
+        ],
+        analogy: null,
+      },
+    ];
+
+    const buttonContainer = document.getElementById('button-container');
+    const contentContainer = document.getElementById('content-container');
+
+    let activeElementId = 'lead'; // 初始設定為第一個元素
+
+    // 渲染內容的函數
+    const renderContent = (element) => {
+      let contentHtml = `
+        <h2 class="text-2xl sm:text-3xl font-bold mb-4 flex items-center text-blue-900">
+          <i class="${element.icon} w-6 h-6"></i>
+          <span class="ml-3">${element.name}</span>
+        </h2>
+        <div class="text-lg space-y-4 text-gray-700">
+      `;
+
+      if (element.id === 'demo') {
+        contentHtml += `
+          <div>
+            <span class="font-bold text-blue-800">歌曲範例:</span>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+              ${element.songs.map(song => `
+                <li>
+                  <a href="${song.url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">
+                    ${song.name}
+                  </a>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      } else {
+        contentHtml += `
+          <div>
+            <p>
+              <span class="font-bold text-blue-800">角色與功能:</span> ${element.description}
+            </p>
+            <p>
+              <span class="font-bold text-blue-800">舉例:</span> ${element.example}
+            </p>
+          </div>
+        `;
+      }
+
+      if (element.analogy) {
+        contentHtml += `
+          <p>
+            <span class="font-bold text-blue-800">想像:</span> ${element.analogy}
+          </p>
+        `;
+      }
+
+      contentHtml += `</div>`;
+      contentContainer.innerHTML = contentHtml;
+    };
+
+    // 更新按鈕樣式的函數
+    const updateActiveButton = (id) => {
+      document.querySelectorAll('#button-container button').forEach(btn => {
+        const isActive = btn.dataset.id === id;
+        btn.classList.remove('bg-blue-800', 'text-white', 'shadow-lg', 'scale-105');
+        btn.classList.add('bg-stone-200', 'text-gray-800');
+        if (isActive) {
+          btn.classList.remove('bg-stone-200', 'text-gray-800');
+          btn.classList.add('bg-blue-800', 'text-white', 'shadow-lg', 'scale-105');
+        }
+      });
+    };
+
+    // 監聽按鈕點擊事件
+    buttonContainer.addEventListener('click', (e) => {
+      const button = e.target.closest('button');
+      if (button) {
+        activeElementId = button.dataset.id;
+        const selectedElement = elements.find(el => el.id === activeElementId);
+        if (selectedElement) {
+          renderContent(selectedElement);
+          updateActiveButton(activeElementId);
+        }
+      }
+    });
+
+    // 初始化頁面
+    document.addEventListener('DOMContentLoaded', () => {
+      // 動態生成按鈕
+      buttonContainer.innerHTML = elements.map(el => `
+        <button data-id="${el.id}" class="flex flex-col items-center p-3 sm:p-4 rounded-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105 hover:bg-blue-700 hover:text-white">
+          <i class="${el.icon} w-6 h-6"></i>
+          <span class="mt-2 text-sm sm:text-base font-semibold">${el.name}</span>
+        </button>
+      `).join('');
+
+      // 首次載入頁面時顯示第一個元素的內容
+      const initialElement = elements.find(el => el.id === activeElementId);
+      if (initialElement) {
+        renderContent(initialElement);
+        updateActiveButton(activeElementId);
+      }
+    });
+  </script>
+</body>
+</html>
